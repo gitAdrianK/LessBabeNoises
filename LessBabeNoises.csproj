@@ -71,6 +71,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModEntry.cs" />
+    <Compile Include="Patching\EndingKing.cs" />
+    <Compile Include="Patching\HangingBabe.cs" />
+    <Compile Include="Patching\NBPKingEntity.cs" />
+    <Compile Include="Patching\OwlKingEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
