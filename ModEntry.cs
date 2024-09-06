@@ -11,7 +11,6 @@ using JumpKing.Util;
 using JumpKing.Util.DrawBT;
 using LessBabeNoises.Patching;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace LessBabeNoises
@@ -29,8 +28,9 @@ namespace LessBabeNoises
         [BeforeLevelLoad]
         public static void BeforeLevelLoad()
         {
-            Debugger.Launch();
+            //Debugger.Launch();
 
+            // 150 -55000
             Harmony harmony = new Harmony("Zebra.LessBabeNoises.Harmony");
             new EndingKing(harmony);
             new NBPKingEntity(harmony);
@@ -46,6 +46,12 @@ namespace LessBabeNoises
         {
             // Babes get created before OnLevelStart is called, so we cant rely on their MakeBT method to remove babe sounds!
             // We will have to get their BehaviorTreeComp some other way.
+            // OnLevelEnd is called before the ending plays, so we reset here
+
+            MuteMainBabe = false;
+            MuteNewBabe = false;
+            MuteGhostBabe = false;
+
             if (Game1.instance.contentManager?.level?.Info.Tags is null)
             {
                 return;
@@ -58,8 +64,15 @@ namespace LessBabeNoises
                                         .GetValue<List<IEnding>>();
 
             // --- Debugging ---
-            IEnding test = endings.Find(e => e.GetType() == typeof(NormalEnding));
-            RemoveMainBabeNoises(test);
+            IEnding test1 = endings.Find(e => e.GetType() == typeof(NormalEnding));
+            RemoveMainBabeNoises(test1);
+            IEnding test2 = endings.Find(e => e.GetType() == typeof(NewBabePlusEnding));
+            RemoveNewBabeNoises(test2);
+            IEnding test3 = endings.Find(e => e.GetType() == typeof(OwlEnding));
+            RemoveGhostBabeNoises(test3);
+            MuteMainBabe = true;
+            MuteNewBabe = true;
+            MuteGhostBabe = true;
             // --- Debugging ---
 
             foreach (string tag in Game1.instance.contentManager.level.Info.Tags)
@@ -86,17 +99,6 @@ namespace LessBabeNoises
             }
         }
 
-        /// <summary>
-        /// Called by Jump King when the Level Ends
-        /// </summary>
-        [OnLevelEnd]
-        public static void OnLevelEnd()
-        {
-            MuteMainBabe = false;
-            MuteNewBabe = false;
-            MuteGhostBabe = false;
-        }
-
         public static void RemoveMainBabeNoises(IEnding ending)
         {
             ISpriteEntity babe = Traverse.Create(ending).Field("m_babe").GetValue<ISpriteEntity>();
@@ -110,7 +112,7 @@ namespace LessBabeNoises
             Traverse traverseSequencor = Traverse.Create(btSequencor)
                 .Field("m_children");
             IBTnode[] sequencorNodes = traverseSequencor.GetValue<IBTnode[]>();
-            List<IBTnode> remainingSounds = new List<IBTnode>();
+            List<IBTnode> remainingNodes = new List<IBTnode>();
             int count = 0;
             foreach (IBTnode node in sequencorNodes)
             {
@@ -122,21 +124,64 @@ namespace LessBabeNoises
                         continue;
                     }
                 }
-                remainingSounds.Add(node);
+                remainingNodes.Add(node);
             }
-            traverseSequencor.SetValue(remainingSounds.ToArray());
+            traverseSequencor.SetValue(remainingNodes.ToArray());
         }
 
         public static void RemoveNewBabeNoises(IEnding ending)
         {
             ISpriteEntity babe = Traverse.Create(ending).Field("m_babe").GetValue<ISpriteEntity>();
-            BehaviorTreeComp btc = babe.GetComponent<BehaviorTreeComp>();
+            BTmanager btManager = babe.GetComponent<BehaviorTreeComp>().GetRaw();
+            IBTnode[] managerNodes = Traverse.Create(btManager)
+                                            .Field("m_root_node")
+                                            .Field("m_children")
+                                            .GetValue<IBTnode[]>();
+            List<IBTnode> managerNodesList = managerNodes.ToList();
+            BTsequencor btSequencor = (BTsequencor)managerNodesList.Find(node => node.GetType() == typeof(BTsequencor));
+            Traverse traverseSequencor = Traverse.Create(btSequencor)
+                .Field("m_children");
+            IBTnode[] sequencorNodes = traverseSequencor.GetValue<IBTnode[]>();
+            List<IBTnode> remainingNodes = new List<IBTnode>();
+            int count = 0;
+            foreach (IBTnode node in sequencorNodes)
+            {
+                if (node.GetType() == typeof(PlaySFX))
+                {
+                    count++;
+                    if (count != 4)
+                    {
+                        continue;
+                    }
+                }
+                remainingNodes.Add(node);
+            }
+            traverseSequencor.SetValue(remainingNodes.ToArray());
         }
 
         public static void RemoveGhostBabeNoises(IEnding ending)
         {
             ISpriteEntity babe = Traverse.Create(ending).Field("m_babe").GetValue<ISpriteEntity>();
-            BehaviorTreeComp btc = babe.GetComponent<BehaviorTreeComp>();
+            BTmanager btManager = babe.GetComponent<BehaviorTreeComp>().GetRaw();
+            IBTnode[] managerNodes = Traverse.Create(btManager)
+                                            .Field("m_root_node")
+                                            .Field("m_children")
+                                            .GetValue<IBTnode[]>();
+            List<IBTnode> managerNodesList = managerNodes.ToList();
+            BTsequencor btSequencor = (BTsequencor)managerNodesList.Find(node => node.GetType() == typeof(BTsequencor));
+            Traverse traverseSequencor = Traverse.Create(btSequencor)
+                .Field("m_children");
+            IBTnode[] sequencorNodes = traverseSequencor.GetValue<IBTnode[]>();
+            List<IBTnode> remainingNodes = new List<IBTnode>();
+            foreach (IBTnode node in sequencorNodes)
+            {
+                if (node.GetType() == typeof(PlaySFX))
+                {
+                    continue;
+                }
+                remainingNodes.Add(node);
+            }
+            traverseSequencor.SetValue(remainingNodes.ToArray());
         }
     }
 }
