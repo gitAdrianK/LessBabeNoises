@@ -30,7 +30,6 @@ namespace LessBabeNoises
         {
             //Debugger.Launch();
 
-            // 150 -55000
             Harmony harmony = new Harmony("Zebra.LessBabeNoises.Harmony");
             new EndingKing(harmony);
             new NBPKingEntity(harmony);
