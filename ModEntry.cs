@@ -88,6 +88,13 @@ namespace LessBabeNoises
 
         public static void RemoveMainBabeNoises(IEnding ending)
         {
+            /* Sounds are in order:
+                1 - babe.Jump
+                2 - player.Land
+                3 - babe.Kiss
+                4 - babe.Pickup
+             */
+
             ISpriteEntity babe = Traverse.Create(ending).Field("m_babe").GetValue<ISpriteEntity>();
             BTmanager btManager = babe.GetComponent<BehaviorTreeComp>().GetRaw();
             IBTnode[] managerNodes = Traverse.Create(btManager)
@@ -118,6 +125,14 @@ namespace LessBabeNoises
 
         public static void RemoveNewBabeNoises(IEnding ending)
         {
+            /* Sounds are in order:
+                1 - babe.Jump
+                2 - babe.Kiss
+                3 - babe.Mou
+                4 - audio.Plink
+                5 - babe.Pickup
+             */
+
             ISpriteEntity babe = Traverse.Create(ending).Field("m_babe").GetValue<ISpriteEntity>();
             BTmanager btManager = babe.GetComponent<BehaviorTreeComp>().GetRaw();
             IBTnode[] managerNodes = Traverse.Create(btManager)
@@ -130,16 +145,12 @@ namespace LessBabeNoises
                 .Field("m_children");
             IBTnode[] sequencorNodes = traverseSequencor.GetValue<IBTnode[]>();
             List<IBTnode> remainingNodes = new List<IBTnode>();
-            int count = 0;
             foreach (IBTnode node in sequencorNodes)
             {
                 if (node.GetType() == typeof(PlaySFX))
                 {
-                    count++;
-                    if (count != 4)
-                    {
-                        continue;
-                    }
+                    continue;
+
                 }
                 remainingNodes.Add(node);
             }
@@ -148,6 +159,12 @@ namespace LessBabeNoises
 
         public static void RemoveGhostBabeNoises(IEnding ending)
         {
+            /* Sounds are in order:
+                1 - babe.Kiss
+                2 - babe.Jump
+                3 - babe.Pickup
+             */
+
             ISpriteEntity babe = Traverse.Create(ending).Field("m_babe").GetValue<ISpriteEntity>();
             BTmanager btManager = babe.GetComponent<BehaviorTreeComp>().GetRaw();
             IBTnode[] managerNodes = Traverse.Create(btManager)

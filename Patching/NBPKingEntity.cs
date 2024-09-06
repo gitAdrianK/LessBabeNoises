@@ -25,6 +25,14 @@ namespace LessBabeNoises.Patching
 
         public static void RemoveBabeNoises(BehaviorTreeComp __result)
         {
+            /* Sounds are in order:
+                1 - player.EndingParasol
+                2 - babe.Jump
+                3 - babe.Surprised
+                4 - player.Jump
+                5 - babe.Scream
+             */
+
             if (!ModEntry.MuteNewBabe)
             {
                 return;

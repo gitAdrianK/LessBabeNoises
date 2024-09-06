@@ -24,6 +24,10 @@ namespace LessBabeNoises.Patching
 
         public static void RemoveBabeNoises(BehaviorTreeComp __result)
         {
+            /* Sounds are in order:
+                1 - babe.Mou
+             */
+
             if (!ModEntry.MuteNewBabe)
             {
                 return;

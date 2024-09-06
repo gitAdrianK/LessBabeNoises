@@ -25,6 +25,18 @@ namespace LessBabeNoises.Patching
 
         public static void RemoveBabeNoises(BehaviorTreeComp __result)
         {
+            /* Sounds are in order:
+                1 - player.Jump
+                2 - Plink
+                3 - player.Land
+                4 - player.EndingParasol
+                5 - babe.Surprised
+                6 - babe.Surprised
+                7 - player.Jump
+                8 - babe.Scream
+
+                1 - babe.Mou
+             */
             if (!ModEntry.MuteMainBabe)
             {
                 return;
@@ -46,7 +58,8 @@ namespace LessBabeNoises.Patching
                 if (node.GetType() == typeof(PlaySFX))
                 {
                     count++;
-                    if (count == 5
+                    if (count == 2
+                        || count == 5
                         || count == 6
                         || count == 8)
                     {

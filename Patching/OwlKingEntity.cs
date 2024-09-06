@@ -25,6 +25,19 @@ namespace LessBabeNoises.Patching
 
         public static void RemoveBabeNoises(BehaviorTreeComp __result)
         {
+            /* Sounds are in order:
+                1 - player.Plink
+                2 - babe.Pickup
+                3 - babe.Surprised
+                
+                (Unused)
+                1 - player.Jump
+
+                1 - player.Splat
+                2 - babe.Scream
+                3 - babe.Kiss
+             */
+
             if (!ModEntry.MuteGhostBabe)
             {
                 return;
@@ -40,16 +53,11 @@ namespace LessBabeNoises.Patching
                 .Field("m_children");
             IBTnode[] sequencorNodes = traverseSequencor.GetValue<IBTnode[]>();
             List<IBTnode> remainingNodes = new List<IBTnode>();
-            int count = 0;
             foreach (IBTnode node in sequencorNodes)
             {
                 if (node.GetType() == typeof(PlaySFX))
                 {
-                    count++;
-                    if (count != 1)
-                    {
-                        continue;
-                    }
+                    continue;
                 }
                 remainingNodes.Add(node);
             }
