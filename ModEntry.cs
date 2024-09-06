@@ -63,18 +63,6 @@ namespace LessBabeNoises
                                         .Field("m_endings")
                                         .GetValue<List<IEnding>>();
 
-            // --- Debugging ---
-            IEnding test1 = endings.Find(e => e.GetType() == typeof(NormalEnding));
-            RemoveMainBabeNoises(test1);
-            IEnding test2 = endings.Find(e => e.GetType() == typeof(NewBabePlusEnding));
-            RemoveNewBabeNoises(test2);
-            IEnding test3 = endings.Find(e => e.GetType() == typeof(OwlEnding));
-            RemoveGhostBabeNoises(test3);
-            MuteMainBabe = true;
-            MuteNewBabe = true;
-            MuteGhostBabe = true;
-            // --- Debugging ---
-
             foreach (string tag in Game1.instance.contentManager.level.Info.Tags)
             {
                 IEnding ending;
