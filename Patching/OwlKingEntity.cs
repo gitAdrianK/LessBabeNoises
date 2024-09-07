@@ -26,7 +26,7 @@ namespace LessBabeNoises.Patching
         public static void RemoveBabeNoises(BehaviorTreeComp __result)
         {
             /* Sounds are in order:
-                1 - player.Plink
+                1 - audio.Plink
                 2 - babe.Pickup
                 3 - babe.Surprised
                 

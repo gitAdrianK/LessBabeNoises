@@ -27,7 +27,7 @@ namespace LessBabeNoises.Patching
         {
             /* Sounds are in order:
                 1 - player.Jump
-                2 - Plink
+                2 - audio.Plink
                 3 - player.Land
                 4 - player.EndingParasol
                 5 - babe.Surprised
