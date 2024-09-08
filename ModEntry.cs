@@ -69,95 +69,47 @@ namespace LessBabeNoises
                 {
                     MuteMainBabe = true;
                     ending = endings.Find(e => e.GetType() == typeof(NormalEnding));
-                    RemoveMainBabeNoises(ending);
+                    RemoveBabeNoises(ending);
                 }
                 else if (tag == "MuteNewBabe")
                 {
                     MuteNewBabe = true;
                     ending = endings.Find(e => e.GetType() == typeof(NewBabePlusEnding));
-                    RemoveNewBabeNoises(ending);
+                    RemoveBabeNoises(ending);
                 }
                 else if (tag == "MuteGhostBabe")
                 {
                     MuteGhostBabe = true;
                     ending = endings.Find(e => e.GetType() == typeof(OwlEnding));
-                    RemoveGhostBabeNoises(ending);
+                    RemoveBabeNoises(ending);
                 }
             }
         }
 
-        public static void RemoveMainBabeNoises(IEnding ending)
+        /// <summary>
+        /// Removes the noises made by the babe in the ending.
+        /// </summary>
+        /// <param name="ending">The ending the babe belongs to</param>
+        public static void RemoveBabeNoises(IEnding ending)
         {
-            /* Sounds are in order:
-                1 - babe.Jump
-                2 - player.Land
-                3 - babe.Kiss
-                4 - babe.Pickup
-             */
-
-            ISpriteEntity babe = Traverse.Create(ending).Field("m_babe").GetValue<ISpriteEntity>();
-            BTmanager btManager = babe.GetComponent<BehaviorTreeComp>().GetRaw();
-            IBTnode[] managerNodes = Traverse.Create(btManager)
-                                            .Field("m_root_node")
-                                            .Field("m_children")
-                                            .GetValue<IBTnode[]>();
-            List<IBTnode> managerNodesList = managerNodes.ToList();
-            BTsequencor btSequencor = (BTsequencor)managerNodesList.Find(node => node.GetType() == typeof(BTsequencor));
-            Traverse traverseSequencor = Traverse.Create(btSequencor)
-                .Field("m_children");
-            IBTnode[] sequencorNodes = traverseSequencor.GetValue<IBTnode[]>();
-            List<IBTnode> remainingNodes = new List<IBTnode>();
-            foreach (IBTnode node in sequencorNodes)
-            {
-                if (node.GetType() == typeof(PlaySFX))
-                {
-                    continue;
-                }
-                remainingNodes.Add(node);
-            }
-            traverseSequencor.SetValue(remainingNodes.ToArray());
-        }
-
-        public static void RemoveNewBabeNoises(IEnding ending)
-        {
-            /* Sounds are in order:
-                1 - babe.Jump
-                2 - babe.Kiss
-                3 - babe.Mou
-                4 - audio.Plink
-                5 - babe.Pickup
-             */
-
-            ISpriteEntity babe = Traverse.Create(ending).Field("m_babe").GetValue<ISpriteEntity>();
-            BTmanager btManager = babe.GetComponent<BehaviorTreeComp>().GetRaw();
-            IBTnode[] managerNodes = Traverse.Create(btManager)
-                                            .Field("m_root_node")
-                                            .Field("m_children")
-                                            .GetValue<IBTnode[]>();
-            List<IBTnode> managerNodesList = managerNodes.ToList();
-            BTsequencor btSequencor = (BTsequencor)managerNodesList.Find(node => node.GetType() == typeof(BTsequencor));
-            Traverse traverseSequencor = Traverse.Create(btSequencor)
-                .Field("m_children");
-            IBTnode[] sequencorNodes = traverseSequencor.GetValue<IBTnode[]>();
-            List<IBTnode> remainingNodes = new List<IBTnode>();
-            foreach (IBTnode node in sequencorNodes)
-            {
-                if (node.GetType() == typeof(PlaySFX))
-                {
-                    continue;
-
-                }
-                remainingNodes.Add(node);
-            }
-            traverseSequencor.SetValue(remainingNodes.ToArray());
-        }
-
-        public static void RemoveGhostBabeNoises(IEnding ending)
-        {
-            /* Sounds are in order:
-                1 - babe.Kiss
-                2 - babe.Jump
-                3 - babe.Pickup
+            /* Sounds, in order played, are:
+             * Main Babe
+             * 1 - babe.Jump
+             * 2 - player.Land
+             * 3 - babe.Kiss
+             * 4 - babe.Pickup
+             * 
+             * New Babe
+             * 1 - babe.Jump
+             * 2 - babe.Kiss
+             * 3 - babe.Mou
+             * 4 - audio.Plink
+             * 5 - babe.Pickup
+             * 
+             * Ghost Babe
+             * 1 - babe.Kiss
+             * 2 - babe.Jump
+             * 3 - babe.Pickup
              */
 
             ISpriteEntity babe = Traverse.Create(ending).Field("m_babe").GetValue<ISpriteEntity>();
