@@ -72,16 +72,11 @@ namespace LessBabeNoises.Patching
                 .Field("m_children");
             IBTnode[] sequencorNodes2 = traverseSequencor2.GetValue<IBTnode[]>();
             List<IBTnode> remainingNodes2 = new List<IBTnode>();
-            int count2 = 0;
             foreach (IBTnode node in sequencorNodes2)
             {
                 if (node.GetType() == typeof(PlaySFX))
                 {
-                    count2++;
-                    if (count2 != 1)
-                    {
-                        continue;
-                    }
+                    continue;
                 }
                 remainingNodes2.Add(node);
             }
